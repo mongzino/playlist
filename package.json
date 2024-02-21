@@ -2,7 +2,7 @@
   "name": "playlist",
   "version": "1.0.0",
   "description": "",
-  "main": "insert.js",
+  "main": "main.js",
   "type": "module",
   "scripts": {
     "start": "node --env-file .env"
