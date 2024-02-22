@@ -1,7 +1,7 @@
-const { MongoClient } = require('mongodb');
-const Input = require("./userInput");
+import { MongoClient } from "mongodb";
+import Input from "./userInput.js";
 
-const uri = process.env.DB_ATLAS_URL;
+const uri = process.env.DB_URL;
 
 
 async function withdraw(client,user){
