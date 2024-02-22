@@ -1,9 +1,9 @@
 .gitignore
 .env
+# .env
 node_modules
-<<<<<<< HEAD
-some.js
-=======
+package-lock.json
+package.json
+
 deleteData.js
 insertData.js
->>>>>>> origin/main
