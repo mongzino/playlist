@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import getInput from "userInput";
+import getUserInput from "userInput";
 
 const uri = process.env.DB_URL;
 const client = new MongoClient(uri);
