@@ -1,29 +1,44 @@
 import { MongoClient } from "mongodb";
 import getInput from "./userInput.js";
 
+// Auto Increment
+async function getNextSequence(user_id) {
+  var ret = await client
+  .db("PlaylistDB")
+  .collection("counters")
+  .findOneAndUpdate(
+    { _id: user_id },
+    { $inc: { seq: 1 } },
+    { returnDocument: 'after' }
+  );
+  return ret.seq;
+}
+
 export async function create(client, user_id) {
-  console.clear();
+  // console.clear();
   console.log("♬ 생성할 플레이리스트의 제목을 입력해주세요");
   let title = await getInput();
 
   console.log("♬ 생성할 플레이리스트의 설명을 입력해주세요");
   let description = await getInput();
-
-  const result = await client
-    .db("PlaylistDB")
-    .collection("playlist")
-    .insertOne({
-      // 아이디 자동 부여하는 방법 추가
-      _id: user_id * 100 + 1,
-      music_id: [],
-      owner: user_id,
-      title: title,
-      description: description,
-      views: 0,
-    });
-
-  // console.log(result);
-  console.log("♬ 플레이리스트가 생성되었습니다!");
+  
+  try {
+    await client
+      .db("PlaylistDB")
+      .collection("playlist")
+      .insertOne({
+        // 아이디 자동 부여하는 방법 추가
+        _id: await getNextSequence(user_id),
+        music_id: [],
+        owner: user_id,
+        title: title,
+        description: description,
+        views: 0,
+      });
+    console.log("♬ 플레이리스트가 생성되었습니다!");
+  } finally {
+    await getInput();
+  }
 }
 
 export async function find(client, playlist) {
@@ -43,9 +58,9 @@ export async function find(client, playlist) {
         .db("PlaylistDB")
         .collection("music")
         .findOne({ _id: musicList[i] });
-      musicList[i] = musicInfo.title;
+      musicList[i] = musicInfo;
     }
-    console.table(musicList);
+    console.table(musicList, ["title", "length", "composer", "lyricist"]);
   } catch {
     console.log("잘못된 입력입니다.");
   } finally {
@@ -55,24 +70,63 @@ export async function find(client, playlist) {
 }
 
 export async function modify(client, playlist) {
-  console.log("♬ 수정하고 싶은 플레이리스트 번호를 선택해주세요");
-  const sel = await getInput();
-  console.log("♬ 새로운 플레이리스트 제목을 입력해주세요");
-  const title = await getInput();
-  console.log("♬ 새로운 플레이리스트 설명을 입력해주세요");
-  
-  try {
-    const description = await getInput();
+  console.log(
+    "%c♬ %c수정하고 싶은 플레이리스트 번호를 선택해주세요",
+    "color: green",
+    "color: white"
+  );
+  const sel = parseInt(await getInput());
+  console.clear();
+  console.log(
+    "%c♬ %c1: 수록곡 편집 %c2: 제목&설명 변경",
+    "color: green",
+    "color: yello",
+    "color: blue"
+  );
+  const val = parseInt(await getInput());
+  if (val === 1) {
+    // 수록곡 출력
+    let musicList = [...playlist[sel].music_id]; // 배열 복사
+    for (let i = 0; i < musicList.length; i++) {
+      let musicInfo = await client
+        .db("PlaylistDB")
+        .collection("music")
+        .findOne({ _id: musicList[i] });
+      musicList[i] = musicInfo;
+    }
+    console.table(musicList, ["title", "length", "composer", "lyricist"]);
+
+    // 수록곡 편집
+    console.log("♬ 삭제하고 싶은 수록곡의 번호를 입력해주세요");
+    const music_sel = await getInput();
     await client
       .db("PlaylistDB")
       .collection("playlist")
       .updateOne(
         { _id: playlist[sel]._id },
-        { $set: { title: title, description: description } }
+        { $pull: { music_id: playlist[sel].music_id[music_sel] } } // $pull : 조건을 만족하는 요소 제거
       );
-  } catch {
+  } else if (val === 2) {
+    // 설정 변경
+    console.log("♬ 새로운 플레이리스트 제목을 입력해주세요");
+    const title = await getInput();
+    console.log("♬ 새로운 플레이리스트 설명을 입력해주세요");
+    const description = await getInput();
+
+    try {
+      await client
+        .db("PlaylistDB")
+        .collection("playlist")
+        .updateOne(
+          { _id: playlist[sel]._id },
+          { $set: { title: title, description: description } }
+        );
+    } catch {
+      console.log("잘못된 입력입니다.");
+      await getInput();
+    }
+  } else {
     console.log("잘못된 입력입니다.");
-    await getInput();
   }
 }
 
@@ -114,7 +168,7 @@ async function main(client, user_id) {
     playlist.forEach((pl) => {
       pl.owner = userInfo.name;
     });
-    console.table(playlist, ["owner", "title", "description", "views"]);
+    console.table(playlist/*, ["owner", "title", "description", "views"]*/);
 
     // 메뉴
     console.log(
@@ -131,15 +185,14 @@ async function main(client, user_id) {
       await find(client, playlist);
     } else if (menu === 3) {
       // console.log("플레이리스트 수정하기");
-      // 선택한 플레이리스트 설정 수정 함수(이름, 설명)
+      // 선택한 플레이리스트 수정 함수
       await modify(client, playlist);
-      // 추가: 선택한 플레이리스트 곡 삭제
     } else if (menu === 4) {
       // console.log("플레이리스트 삭제하기");
       // 내 플레이리스트 목록 보여주는 함수
       await remove(client, playlist);
     } else if (menu === 5) {
-      console.log("뒤로가기");
+      console.log("%c뒤로가기", "color: yellow; font-style: italic;");
       process.exit();
       // return
     } else {
