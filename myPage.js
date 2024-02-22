@@ -1,5 +1,5 @@
-const { MongoClient } = require('mongodb');
-const Input = require("./userInput");
+import { MongoClient } from 'mongodb';
+import { getUserInput } from "./userInput";
 
 
 
@@ -9,14 +9,14 @@ async function main(){
 
     while(true){
         console.log(`마이페이지 - 1.플레이리스트 관리 2.내 정보 관리 3.뒤로가기`);
-        let menu = await Input.getUserInput();
+        let menu = await getUserInput();
         if(menu==='1') {
             console.log('내 플레이리스트 관리하기>');
-            let title = await Input.getUserInput();
+            let title = await getUserInput();
         }else if(menu==='2'){
             while(true) {
                 console.log('내정보 관리 - 1.회원 탈퇴 2.프로필 뮤직 설정 3.선호 장르 설정 4.뒤로가기');
-                let user = await Input.getUserInput();
+                let user = await getUserInput();
                 if(menu==='1'){
                     console.log(`회원 탈퇴 하시겠습니까`)
                 }else if(menu==='2'){

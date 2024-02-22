@@ -1,7 +1,7 @@
 {
   "name": "playlist",
   "version": "1.0.0",
-  "description": "",
+  "description": "music playlist program with mongodb using javascript",
   "main": "main.js",
   "type": "module",
   "scripts": {
