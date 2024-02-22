@@ -1,4 +1,9 @@
 .gitignore
 .env
 node_modules
+<<<<<<< HEAD
 some.js
+=======
+deleteData.js
+insertData.js
+>>>>>>> origin/main
