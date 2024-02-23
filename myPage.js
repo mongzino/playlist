@@ -3,48 +3,11 @@ import getUserInput from "./userInput.js";
 import { create, find, modify, remove } from "./myPlaylist.js";
 import chalk from "chalk";
 
-export default async function main(client, user_id) {
-  while (true) {
-    console.log(chalk.bgCyan(`마이페이지`), chalk.white(`- 1:플레이리스트 관리 2:내 정보 관리`), chalk.cyan(`3:뒤로가기`));
-    let menu = await getUserInput();
-    // 플레이리스트 관리
-    if (menu === "1") {
-      // 사용자 정보 불러오기
-      const userInfo = await client
-        .db("PlaylistDB")
-        .collection("user")
-        .findOne({ _id: user_id });
-
-      while (true) {
-        console.clear();
-        // 내 플레이리스트 목록 보여주기
-        const playlist = await client
-          .db("PlaylistDB")
-          .collection("playlist")
-          .find({ owner: user_id })
-          .toArray();
-        await playlist.forEach((pl) => {
-          pl.owner = userInfo.name;
-        });
-        console.table(playlist, ["owner", "title", "description", "views"]);
-        // 메뉴 선택
-        console.log(
-          chalk.bgCyan("플레이리스트 관리"), chalk.white("- 1: 플레이리스트 생성 2: 플레이리스트 조회 3: 플레이리스트 수정 4: 플레이리스트 삭제"), chalk.cyan(`5:뒤로가기`)
-        );
-        let pl_menu = parseInt(await getUserInput());
-        if (pl_menu === 1) {
-          // 플레이리스트 생성 함수
-          await create(client, user_id);
-        } else if (pl_menu === 2) {
-          // 선택한 플레이리스트의 수록곡 조회 함수
-          await find(client, playlist);
-        } else if (pl_menu === 3) {
-          // 선택한 플레이리스트 수정 함수
-          await modify(client, playlist);
-        } else if (pl_menu === 4) {
-          // 내 플레이리스트 목록 보여주는 함수
-          await remove(client, playlist);
-        } else if (pl_menu === 5) {
+import { withdraw, profileMusic, favoriteGenre } from "./myInfo.js"; 
+// info 페이지 추가
+async function main(){
+    const uri = process.env.DB_URL;
+    const client = new MongoClient(uri);
 
           break;
         } else {
