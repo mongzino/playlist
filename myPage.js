@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import getUserInput from "./userInput.js";
 
-
+import favoriteGenre from "./myInfo.js";
 
 async function main(){
     const uri = process.env.DB_URL;
@@ -18,9 +18,11 @@ async function main(){
                 console.log('내정보 관리 - 1.회원 탈퇴 2.프로필 뮤직 설정 3.선호 장르 설정 4.뒤로가기');
                 let user = await getUserInput();
                 if(user==='1'){
-                    console.log(`회원 탈퇴 하시겠습니까`)
+                    console.log(`회원 탈퇴 화면입니다`)
+                    await myInfo.withdraw();
                 }else if(user==='2'){
                     console.log(`프로필 뮤직 설정 화면입니다`)
+                    await favoriteGenre();
                 }else if(user==='3'){
                     console.log(`선호 장르 설정 화면입니다`)
                 }else if(user==='4'){
