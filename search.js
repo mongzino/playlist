@@ -7,31 +7,31 @@ const dbName = "PlaylistDB";
 const collections = ["none", "music", "album", "singer", "playlist"];
 let userId;
 
-async function Main(ID) {
+export default async function main(ID) {
   userId = ID;
   while (true) {
     console.log(
-      "1. 음악 2. 앨범 3. 가수 4. 플레이리스트 5. 통합검색 6.뒤로가기"
+      "1. 음악 2. 앨범 3. 가수 4. 플레이리스트 5. 통합검색 (아직) 6.뒤로가기"
     );
     let tableCommand = await getInput();
     if (
-      tableCommand == "1" ||
-      tableCommand == "2" ||
-      tableCommand == "3" ||
-      tableCommand == "4"
+      tableCommand == 1 ||
+      tableCommand == 2 ||
+      tableCommand == 3 ||
+      tableCommand == 4
     ) {
       await searchCondition(tableCommand);
-    } else if (tableCommand == "5") {
+    } else if (tableCommand == 5) {
       await searchAll();
-    } else if (tableCommand == "6") {
-      process.exit();
+    } else if (tableCommand == 6) {
+      break;
     } else console.log("올바른 값을 입력해주십시오.");
   }
 }
 
 async function searchCondition(table) {
   while (true) {
-    console.log("1. 인기순 2. 가나다순 3. 추천곡 4. 검색 5. 뒤로가기");
+    console.log("1. 인기순 2. 가나다순 3. 추천 4. 검색 5. 뒤로가기");
     let sortingCommand = await getInput();
 
     if (sortingCommand == 1 || sortingCommand == 2 || sortingCommand == 3) {
@@ -44,11 +44,30 @@ async function searchCondition(table) {
 }
 
 async function searchAll() {
-  while (true) {
-    console.log("검색어를 입력해주십시오");
-    let searchCommand = await getInput();
-    searchList(5, searchCommand);
-  }
+  //이건 나중에
+  console.log("검색어를 입력해주십시오");
+  let command = await getInput();
+
+  let musicMax = await client
+    .db(dbName)
+    .collection("music")
+    .countDocuments({ title: { $regex: command, $options: "i" } });
+  let albumMax = await client
+    .db(dbName)
+    .collection("album")
+    .countDocuments({ title: { $regex: command, $options: "i" } });
+  let singerMax = await client
+    .db(dbName)
+    .collection("singer")
+    .countDocuments({ singer: { $regex: command, $options: "i" } });
+
+  result = await client
+    .db(dbName)
+    .collection("music")
+    .find({ singer: { $regex: command, $options: "i" } })
+    .project({})
+    .sort()
+    .toArray();
 }
 
 async function getSearch(table) {
@@ -64,23 +83,33 @@ async function searchList(table, command) {
   let result;
   let max;
   let projectQuery = { title: 1 };
-  let sortingQuery = {};
+  let sortingQuery = { title: 1 };
   let findQuery = {};
 
-  if (command == "1" || command == "2") {
+  if (command == 1 || command == 2) {
     // 조건에 따른 정렬
-    max = await client
+    max = await client // document 개수
       .db(dbName)
       .collection(collections[table])
       .countDocuments();
-
-    if (command == "1") sortingQuery = { views: -1 };
-    else sortingQuery = { title: 1 };
-
-    if (table == "3") projectQuery = { singer: 1 };
+    if (command == 1) sortingQuery = { views: -1 }; // 인기순
+    if (table == 3) projectQuery = { singer: 1 }; // 가수는 이름이 다름
+  } else if (command == 3) {
+    const user = await client
+      .db(dbName)
+      .collection("user")
+      .find({ _id: userId })
+      .toArray();
+    const userGenre = user[0].favoriteGenre;
+    max = await client
+      .db(dbName)
+      .collection(collections[table])
+      .countDocuments({ genre: userGenre });
+    findQuery = { genre: userGenre };
+    if (table == 3) projectQuery = { singer: 1 };
   } else {
     // 조건에 따른 검색
-    if (table == "3") {
+    if (table == 3) {
       max = await client
         .db(dbName)
         .collection(table)
@@ -102,6 +131,19 @@ async function searchList(table, command) {
     .project(projectQuery)
     .sort(sortingQuery)
     .toArray();
+  if (command == 3) {
+    let random = [];
+    let num = 0;
+    for (let i = 0; i < max; i++) {
+      random[i] = { index: num, value: Math.random() };
+      num++;
+    }
+    random.sort((a, b) => a.value - b.value);
+    for (let i = 0; i < max; i++) {
+      random[i] = result[random[i].index];
+    }
+    result = random;
+  }
 
   while (key) {
     res = result.slice(start, start + 10);
@@ -134,18 +176,21 @@ async function searchList(table, command) {
 
 async function searchResult(music) {
   const musicId = music._id;
-  console.log(musicId);
   const result = await client
     .db(dbName)
     .collection("music")
     .find({ _id: musicId })
     .toArray();
+  await client
+    .db(dbName)
+    .collection("music")
+    .updateOne({ _id: musicId }, { $inc: { views: 1 } });
   console.table(result);
   while (true) {
     console.log("1.플레이리스트에 추가하기 2.뒤로가기");
     const searchResultCommand = await getInput();
     if (searchResultCommand == 1) {
-      await addMusicToPlayList(music);
+      await addMusicToPlayList(1, music);
       break;
     } else if (searchResultCommand == 2) break;
     else console.log("올바른 값을 입력해주세요");
@@ -172,18 +217,29 @@ async function searchResultElse(table, value) {
     .collection("music")
     .find(findQuery)
     .toArray();
+  await client
+    .db(dbName)
+    .collection(collections[table])
+    .updateOne({ _id: value._id }, { $inc: { views: 1 } });
   console.table(result);
   while (true) {
-    console.log(`${result.length}. 뒤로가기`);
+    console.log(
+      `${result.length}. ${collections[table]} 전체 플레이리스트에 추가하기 ${
+        result.length + 1
+      }. 뒤로가기`
+    );
     const command = await getInput();
     if (command < result.length && command % 1 == 0) {
       await searchResult(result[command]);
-    } else if (command == result.length) break;
+    } else if (command == result.length) {
+      await addMusicToPlayList(table, result);
+      break;
+    } else if (command == result.length + 1) break;
     else console.log("올바른 값을 입력해주세요");
   }
 }
 
-async function addMusicToPlayList(music) {
+async function addMusicToPlayList(table, target) {
   const playList = await client
     .db(dbName)
     .collection("playlist")
@@ -195,24 +251,44 @@ async function addMusicToPlayList(music) {
   console.log(`${playList.length}. 취소하기`);
   const command = await getInput();
   if (command % 1 == 0 && command < playList.length) {
-    await client
-      .db(dbName)
-      .collection("playlist")
-      .updateOne(
-        { _id: playList[command]._id },
-        { $addToSet: { music_id: music._id } }
+    if (table == 1) {
+      await client
+        .db(dbName)
+        .collection("playlist")
+        .updateOne(
+          { _id: playList[command]._id },
+          { $addToSet: { music_id: target._id } }
+        );
+      await client
+        .db(dbName)
+        .collection("music")
+        .updateOne(
+          { _id: target._id },
+          { $addToSet: { playlist_id: playList[command]._id } }
+        );
+      console.log(
+        ` ${target.title}가 ${playList[command].title} 플레이리스트에 추가 되었습니다.`
       );
-    await client
-      .db(dbName)
-      .collection("music")
-      .updateOne(
-        { _id: music._id },
-        { $addToSet: { playlist_id: playList[command]._id } }
+    } else {
+      await target.forEach((tag) => {
+        client
+          .db(dbName)
+          .collection("playlist")
+          .updateOne(
+            { _id: playList[command]._id },
+            { $addToSet: { music_id: tag._id } }
+          );
+        client
+          .db(dbName)
+          .collection("music")
+          .updateOne(
+            { _id: tag._id },
+            { $addToSet: { playlist_id: playList[command]._id } }
+          );
+      });
+      console.log(
+        ` ${collections[table]}가 ${playList[command].title} 플레이리스트에 추가 되었습니다.`
       );
-    console.log(
-      ` ${music.title}가 ${playList[command].title} 플레이리스트에 추가 되었습니다.`
-    );
+    }
   }
 }
-
-Main(4000000);

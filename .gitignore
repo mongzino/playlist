@@ -1,12 +1,11 @@
-.gitignore
+gitignore
 .env
-# .env
+.env
+some
 node_modules
-package-lock.json
-package.json
-
 deleteData.js
 insertData.js
 counter.js
 maintest.js
 password.js
+
