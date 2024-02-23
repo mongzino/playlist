@@ -126,6 +126,12 @@ export async function createAccount(client, name, password) {
     const result = await usersCollection.insertOne(account);
 
     console.log(`새로운 계정이 생성되었습니다. 생성된 id: ${result.insertedId}`);
+    
+    // 사용자 전용 playlist counter 생성
+    await collection.insertOne({
+        _id: id,
+        seq: id*100
+    })
 
     // cnt 값에 1을 더합니다.
     await countersCollection.updateOne({ _id: "idCount" }, { $inc: { cnt: 1 } });

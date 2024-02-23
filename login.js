@@ -19,7 +19,8 @@ export async function login(client) {
 
     if (user) {
         console.log(chalk.bgCyan(`로그인에 성공했습니다, ${user.name}님 환영합니다.`));
-        return true
+        // 로그인 성공시 id값이 리턴 (다른 함수에서 사용 필요)
+        return user._id
     } else {
         console.clear()
         console.log(chalk.cyan("아이디 또는 비밀번호가 일치하지 않습니다."));
