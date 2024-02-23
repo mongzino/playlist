@@ -38,7 +38,19 @@ async function main() {
                 while(true){
                 console.log("1.검색하기 2.마이페이지 3.로그아웃")
                 let Umenu=await getUserInput()
-                if(Umenu==3)break
+                if (Umenu==1)
+                {
+
+                }
+                else if(Umenu==2)
+                {
+                    
+                }
+                else if(Umenu==3)
+                {
+                    console.log("\n로그아웃 합니다")
+                    break
+                }
                 }
             }
             else if(mainInput==3)
