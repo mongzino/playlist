@@ -7,8 +7,8 @@ import readlineSync from 'readline-sync';
 import chalk from "chalk";
 
 
-// const uri = process.env.DB_URL;
-// const client = new MongoClient(uri);
+const uri = process.env.DB_URL;
+const client = new MongoClient(uri);
 
 
 export default async function ckName(client){
@@ -128,15 +128,14 @@ export async function createAccount(client, name, password) {
     console.log(`새로운 계정이 생성되었습니다. 생성된 id: ${result.insertedId}`);
     
     // 사용자 전용 playlist counter 생성
-    await collection.insertOne({
-        _id: id,
-        seq: id*100
+    await countersCollection.insertOne({
+        _id: newId,
+        seq: newId*100
     })
 
     // cnt 값에 1을 더합니다.
     await countersCollection.updateOne({ _id: "idCount" }, { $inc: { cnt: 1 } });
 }
-
 
   
 
