@@ -53,7 +53,7 @@ export async function profileMusic() {
 
         while (continueUpdating) {
             // 사용자로부터 _id 입력 받기
-            console.log('프로필 뮤직 설정 메뉴입니다')
+            // console.log('프로필 뮤직 설정 메뉴입니다')
             console.log('업데이트할 회원의 _id를 입력하세요 (중단하려면 "exit"를 입력하세요): ');
             const userIdInput = await getUserInput();
             
@@ -101,7 +101,7 @@ export async function favoriteGenre() {
 
         while (continueUpdating) {
             // 사용자로부터 _id 입력 받기
-            console.log('선호장르 설정 메뉴입니다')
+            // console.log('선호장르 설정 메뉴입니다')
             console.log('업데이트할 회원의 _id를 입력하세요 (중단하려면 "exit"를 입력하세요): ');
             const userIdInput = await getUserInput();
             
