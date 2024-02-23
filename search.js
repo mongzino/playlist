@@ -1,14 +1,13 @@
 import getInput from "./userInput.js";
-import { MongoClient } from "mongodb";
 
-const uri = process.env.DB_URL;
-const client = new MongoClient(uri);
 const dbName = "PlaylistDB";
 const collections = ["none", "music", "album", "singer", "playlist"];
 let userId;
+let client;
 
-export default async function main(ID) {
+export default async function main(ID, cli) {
   userId = ID;
+  client = cli;
   while (true) {
     console.log(
       "1. 음악 2. 앨범 3. 가수 4. 플레이리스트 5. 통합검색 (아직) 6.뒤로가기"
@@ -33,13 +32,13 @@ export default async function main(ID) {
 async function searchCondition(table) {
   while (true) {
     console.log("1. 인기순 2. 가나다순 3. 추천 4. 검색 5. 뒤로가기");
-    let sortingCommand = await getInput();
+    let command = await getInput();
 
-    if (sortingCommand == 1 || sortingCommand == 2 || sortingCommand == 3) {
-      await searchList(table, sortingCommand);
-    } else if (sortingCommand == 4) {
+    if (command == 1 || command == 2 || command == 3) {
+      await searchList(table, command);
+    } else if (command == 4) {
       await getSearch(table);
-    } else if (sortingCommand == 5) {
+    } else if (command == 5) {
       console.clear();
       break;
     } else console.log("올바른 값을 입력해주십시오.");
@@ -354,5 +353,3 @@ async function addMusicToPlayList(table, target) {
     }
   }
 }
-
-main(4000000);

@@ -56,7 +56,7 @@ async function main() {
           );
           let Umenu = await getUserInput();
           if (Umenu == 1) {
-            await search(id);
+            await search(id, client);
           } else if (Umenu == 2) {
             await mypage(client, id);
           } else if (Umenu == 3) {
