@@ -100,7 +100,7 @@ async function searchList(table, command) {
       .collection("user")
       .find({ _id: userId })
       .toArray();
-    const userGenre = user[0].favoriteGenre;
+    const userGenre = user[0].genre;
     max = await client
       .db(dbName)
       .collection(collections[table])
@@ -144,9 +144,13 @@ async function searchList(table, command) {
 
   while (key) {
     res = result.slice(start, start + 10);
-    if (table == 1 || table == 2 || table == 4)
-      console.table(res.map((item) => ({ title: item.title })));
-    else console.table(res.map((item) => ({ title: item.singer })));
+    if (table == 1 || table == 2) {
+      console.table(
+        res.map((item) => ({ 제목: item.title, 가수: item.singer }))
+      );
+    } else if (table == 3)
+      console.table(res.map((item) => ({ 이름: item.singer })));
+    else console.table(res.map((item) => ({ 이름: item.title })));
     while (true) {
       console.log(`${res.length}.더 보기 ${res.length + 1}.뒤로가기`);
       let searchCommand = await getInput();
