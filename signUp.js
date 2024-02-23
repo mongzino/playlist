@@ -99,8 +99,6 @@ export async function updateGenre(client, id) {
 
 
 
-
-// createAccount.js
 // createAccount.js
 export async function createAccount(client, name, id, password) {
     const database = client.db('PlaylistDB'); // 사용할 데이터베이스 이름

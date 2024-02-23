@@ -23,6 +23,7 @@ export async function login(client) {
     } else {
         console.clear()
         console.log(chalk.cyan("아이디 또는 비밀번호가 일치하지 않습니다."));
+        return false
     }
 }
 }
