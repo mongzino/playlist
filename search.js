@@ -24,6 +24,7 @@ export default async function main(ID) {
     } else if (tableCommand == 5) {
       await searchAll();
     } else if (tableCommand == 6) {
+      console.clear();
       break;
     } else console.log("올바른 값을 입력해주십시오.");
   }
@@ -38,8 +39,10 @@ async function searchCondition(table) {
       await searchList(table, sortingCommand);
     } else if (sortingCommand == 4) {
       await getSearch(table);
-    } else if (sortingCommand == 5) break;
-    else console.log("올바른 값을 입력해주십시오.");
+    } else if (sortingCommand == 5) {
+      console.clear();
+      break;
+    } else console.log("올바른 값을 입력해주십시오.");
   }
 }
 
@@ -170,7 +173,10 @@ async function searchList(table, command) {
         break;
       }
     }
-    if (start + 10 >= max) break;
+    if (start + 10 >= max) {
+      console.clear();
+      break;
+    }
   }
 }
 
@@ -191,9 +197,12 @@ async function searchResult(music) {
     const searchResultCommand = await getInput();
     if (searchResultCommand == 1) {
       await addMusicToPlayList(1, music);
+      console.clear();
       break;
-    } else if (searchResultCommand == 2) break;
-    else console.log("올바른 값을 입력해주세요");
+    } else if (searchResultCommand == 2) {
+      console.clear();
+      break;
+    } else console.log("올바른 값을 입력해주세요");
   }
 }
 
@@ -233,9 +242,12 @@ async function searchResultElse(table, value) {
       await searchResult(result[command]);
     } else if (command == result.length) {
       await addMusicToPlayList(table, result);
+      console.clear();
       break;
-    } else if (command == result.length + 1) break;
-    else console.log("올바른 값을 입력해주세요");
+    } else if (command == result.length + 1) {
+      console.clear();
+      break;
+    } else console.log("올바른 값을 입력해주세요");
   }
 }
 
