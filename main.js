@@ -9,6 +9,7 @@ import ckName, {
 } from "./signUp.js";
 import { login } from "./login.js";
 import mypage from "./myPage.js";
+import search from "./search.js";
 
 const uri = process.env.DB_URL;
 const client = new MongoClient(uri);
@@ -47,11 +48,15 @@ async function main() {
         }
       } else if (mainInput == 2) {
         // console.log("로그인");
-        let logIn=await login(client);
+        let logIn = await login(client);
         while (logIn) {
-          console.log(chalk.white("1.검색하기 2.마이페이지"), chalk.cyan("3.로그아웃"));
+          console.log(
+            chalk.white("1.검색하기 2.마이페이지"),
+            chalk.cyan("3.로그아웃")
+          );
           let Umenu = await getUserInput();
           if (Umenu == 1) {
+            await search(id);
           } else if (Umenu == 2) {
             await mypage(client, id);
           } else if (Umenu == 3) {
