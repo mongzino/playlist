@@ -62,6 +62,7 @@ export async function find(client, playlist) {
   } finally {
     console.log(chalk.cyan(" ▶ 조회를 끝내려면 Enter를 입력해주세요"));
     await getInput();
+    return;
   }
 }
 
@@ -78,12 +79,18 @@ export async function modify(client, playlist) {
   const val = parseInt(await getInput());
   if (val === 1) {
     // 수록곡 출력
-    let musicList = await client
+    try {let musicList = await client
       .db("PlaylistDB")
       .collection("music")
       .find({ playlist_id: playlist[sel]._id })
       .toArray();
-    console.table(musicList, ["title", "length", "composer", "lyricist"]);
+    console.table(musicList, ["title", "length", "composer", "lyricist"]);}
+    catch {
+      console.log(chalk.cyan("잘못된 입력입니다."));
+      await getInput();
+      return;
+    }
+
     // 수록곡 편집
     console.log(chalk.bgWhiteBright(" ▶ 삭제하고 싶은 수록곡의 번호를 입력해주세요"));
     const music_sel = await getInput();
@@ -107,6 +114,7 @@ export async function modify(client, playlist) {
       console.log(chalk.cyan("잘못된 입력입니다."));
     } finally {
       await getInput();
+      return;
     }
   } else if (val === 2) {
     // 설정 변경

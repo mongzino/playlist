@@ -8,11 +8,13 @@ import ckName, {
   createAccount,
 } from "./signUp.js";
 import { login } from "./login.js";
+import mypage from "./myPage.js";
 
 const uri = process.env.DB_URL;
 const client = new MongoClient(uri);
 
 async function main() {
+  let id = 0;
   try {
     while (true) {
       console.log(
@@ -26,15 +28,20 @@ async function main() {
       `)
       );
       console.log(chalk.bgCyan("치타 뮤직에 오신 것을 환영합니다"));
-      console.log(chalk.white("1.회원 가입 2.로그인"), chalk.cyan("3.프로그램 종료"));
+      console.log(
+        chalk.white("1.회원 가입 2.로그인"),
+        chalk.cyan("3.프로그램 종료")
+      );
       let mainInput = await getUserInput();
 
       if (mainInput == 1) {
         let name = await ckName(client);
-        let id = await ckId(client);
+        id = await ckId(client);
         let password = await ckPassword(client);
         if (name && id && password) {
-          console.log(chalk.bgCyan(`\n계정생성 되었습니다 환영합니다 ${name}님`));
+          console.log(
+            chalk.bgCyan(`\n계정생성 되었습니다 환영합니다 ${name}님`)
+          );
           await createAccount(client, name, id, password);
           await updateGenre(client, id);
         }
@@ -42,9 +49,19 @@ async function main() {
         // console.log("로그인");
         await login(client);
         while (true) {
-          console.log(chalk.white("1.검색하기 2.마이페이지"), chalk.cyan("3.로그아웃"));
+          console.log(
+            chalk.white("1.검색하기 2.마이페이지"),
+            chalk.cyan("3.로그아웃")
+          );
           let Umenu = await getUserInput();
-          if (Umenu == 3) break;
+          if (Umenu == 1) {
+          } else if (Umenu == 2) {
+            await mypage(client, id);
+          } else if (Umenu == 3) {
+            break;
+          } else {
+            console.log(chalk.cyan("해당하는 번호가 아닙니다."));
+          }
         }
       } else if (mainInput == 3) {
         console.log(chalk.cyan("프로그램을 종료합니다."));
@@ -53,7 +70,9 @@ async function main() {
         console.log(chalk.cyan("해당하는 번호가 아닙니다."));
       }
 
-      console.log(chalk.bgWhiteBright("\n메인 메뉴로 넘어가려면 엔터를 입력하세요"));
+      console.log(
+        chalk.bgWhiteBright("\n메인 메뉴로 넘어가려면 엔터를 입력하세요")
+      );
       await getUserInput();
       console.clear();
     }

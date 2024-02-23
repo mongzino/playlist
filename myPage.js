@@ -1,9 +1,9 @@
 import { MongoClient } from "mongodb";
 import getUserInput from "./userInput.js";
-import { create, find, modify, remove } from "./myPlaylist_pretty.js";
+import { create, find, modify, remove } from "./myPlaylist.js";
 import chalk from "chalk";
 
-async function main(client, user_id) {
+export default async function main(client, user_id) {
   while (true) {
     console.log(chalk.bgCyan(`마이페이지`), chalk.white(`- 1:플레이리스트 관리 2:내 정보 관리`), chalk.cyan(`3:뒤로가기`));
     let menu = await getUserInput();
@@ -64,23 +64,21 @@ async function main(client, user_id) {
         } else if (user === "3") {
           console.log(`선호 장르 설정 화면입니다`);
         } else if (user === "4") {
-          console.log(`뒤로가기`);
           await wait(500);
           console.clear();
           break;
         } else {
-          console.log("잘못된 입력입니다.");
+          console.log(chalk.cyan("잘못된 입력입니다."));
           await wait(500);
           console.clear();
         }
       }
     } else if (menu === "3") {
-      console.log(`뒤로가기`);
       await wait(500);
       console.clear();
       break;
     } else {
-      console.log("잘못된 입력입니다.");
+      console.log(chalk.cyan("잘못된 입력입니다."));
       await wait(500);
       console.clear();
     }
@@ -90,6 +88,6 @@ async function main(client, user_id) {
 const wait = (timeToDelay) =>
   new Promise((resolve) => setTimeout(resolve, timeToDelay));
 
-const uri = process.env.DB_URL;
-const client = new MongoClient(uri);
-await main(client, 4000000);
+// const uri = process.env.DB_URL;
+// const client = new MongoClient(uri);
+// await main(client, 4000000);
