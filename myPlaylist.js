@@ -37,7 +37,10 @@ export async function create(client, user_id) {
         views: 0,
       });
     console.log(chalk.cyan("플레이리스트가 생성되었습니다!"));
-  } finally {
+  } catch {
+    console.log(chalk.cyan("오류발생"));
+  }
+  finally {
     await getInput();
   }
 }
