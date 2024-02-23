@@ -1,8 +1,8 @@
 import { MongoClient } from "mongodb";
 import getUserInput from "./userInput.js";
 
-import { withdraw, profileMusic, favoriteGenre } from "./myInfo.js";
-
+import { withdraw, profileMusic, favoriteGenre } from "./myInfo.js"; 
+// info 페이지 추가
 async function main(){
     const uri = process.env.DB_URL;
     const client = new MongoClient(uri);
