@@ -304,4 +304,3 @@ async function addMusicToPlayList(table, target) {
     }
   }
 }
-main(4000000);
