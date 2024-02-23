@@ -4,8 +4,8 @@ import chalk from "chalk";
 export async function login(client) {
     while(true){
     // 사용자로부터 아이디와 비밀번호를 입력받습니다.
-    console.log(chalk.bgWhiteBright("아이디를 입력하세요"));
-    let id = await getUserInput();
+    console.log(chalk.bgWhiteBright("이름을 입력하세요"));
+    let name = await getUserInput();
     console.log(chalk.bgWhiteBright("비밀번호를 입력하세요"));
     let password = await getUserInput();
 
@@ -13,7 +13,7 @@ export async function login(client) {
     const database = client.db('PlaylistDB'); // 사용할 데이터베이스 이름
     const collection = database.collection('user'); // 사용할 컬렉션 이름
 
-    const query = { _id: id, password: password }; // _id와 password 필드를 사용하여 문서를 조회
+    const query = { name: name, password: password }; // _id와 password 필드를 사용하여 문서를 조회
 
     const user = await collection.findOne(query);
 
