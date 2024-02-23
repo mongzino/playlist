@@ -1,21 +1,22 @@
 import { MongoClient } from "mongodb";
 import getUserInput from "./userInput.js";
 import { create, find, modify, remove } from "./myPlaylist.js";
+import { withdraw,profileMusic,favoriteGenre } from "./myInfo.js";
 import chalk from "chalk";
 
 export default async function main(client, user_id) {
-  while (true) {
+    while (true) {
     console.log(chalk.bgCyan(`마이페이지`), chalk.white(`- 1:플레이리스트 관리 2:내 정보 관리`), chalk.cyan(`3:뒤로가기`));
     let menu = await getUserInput();
     // 플레이리스트 관리
     if (menu === "1") {
       // 사용자 정보 불러오기
-      const userInfo = await client
+    const userInfo = await client
         .db("PlaylistDB")
         .collection("user")
         .findOne({ _id: user_id });
 
-      while (true) {
+    while (true) {
         console.clear();
         // 내 플레이리스트 목록 보여주기
         const playlist = await client
@@ -59,10 +60,13 @@ export default async function main(client, user_id) {
         let user = await getUserInput();
         if (user === "1") {
           console.log(`회원 탈퇴 하시겠습니까`);
+          await withdraw();
         } else if (user === "2") {
           console.log(`프로필 뮤직 설정 화면입니다`);
+          await profileMusic();
         } else if (user === "3") {
           console.log(`선호 장르 설정 화면입니다`);
+          await favoriteGenre();
         } else if (user === "4") {
           await wait(500);
           console.clear();
