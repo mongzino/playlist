@@ -4,6 +4,7 @@ import readline from "readline";
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
+
 });
 
 export default function getUserInput() {
@@ -15,5 +16,25 @@ export default function getUserInput() {
     // .on('close',()=>{
     //     process.exit();
     // });
+  });
+}
+
+export function password(rl) {
+  return new Promise((resolve, reject) => {
+    rl.stdoutMuted = true;
+
+    const originalWriteToOutput = rl._writeToOutput;
+    rl._writeToOutput = function _writeToOutput(stringToWrite) {
+      if (rl.stdoutMuted)
+        rl.output.write("*");
+      else
+        rl.output.write(stringToWrite);
+    };
+
+    rl.question('비밀번호를 입력하세요: ', (pwd) => {
+      rl.stdoutMuted = false;
+      rl._writeToOutput = originalWriteToOutput;
+      resolve(pwd);
+    });
   });
 }
