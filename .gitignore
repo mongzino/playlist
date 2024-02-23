@@ -1,7 +1,7 @@
 gitignore
 .env
 .env
-some
+some.js
 node_modules
 deleteData.js
 insertData.js
