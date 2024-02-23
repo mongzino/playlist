@@ -1,7 +1,10 @@
 .gitignore
 .env
+.env
 node_modules
-some.js
-
 deleteData.js
 insertData.js
+counter.js
+maintest.js
+password.js
+
