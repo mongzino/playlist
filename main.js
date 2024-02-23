@@ -40,8 +40,8 @@ async function main() {
         }
       } else if (mainInput == 2) {
         // console.log("로그인");
-        await login(client);
-        while (true) {
+        let logIn=await login(client);
+        while (logIn) {
           console.log(chalk.white("1.검색하기 2.마이페이지"), chalk.cyan("3.로그아웃"));
           let Umenu = await getUserInput();
           if (Umenu == 3) break;
