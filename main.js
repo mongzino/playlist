@@ -2,6 +2,7 @@ import { MongoClient } from "mongodb";
 import getInput from "./userInput.js";
 import getUserInput from "./userInput.js";
 import ckName, { ckId,ckPassword,updateGenre,createAccount } from "./signUp.js";
+import {login} from "./login.js"
 
 
 
@@ -33,6 +34,12 @@ async function main() {
             else if(mainInput==2)
             {
                 console.log("로그인")
+                await login(client);
+                while(true){
+                console.log("1.검색하기 2.마이페이지 3.로그아웃")
+                let Umenu=await getUserInput()
+                if(Umenu==3)break
+                }
             }
             else if(mainInput==3)
             {
