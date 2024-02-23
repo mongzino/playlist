@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb";
 import getUserInput from "./userInput.js";
 import { create, find, modify, remove } from "./myPlaylist.js";
 import { withdraw, profileMusic, favoriteGenre } from "./myInfo.js"; 
-
+// 수정
 async function main(client, user_id) {
   while (true) {
     console.log(`마이페이지 - 1.플레이리스트 관리 2.내 정보 관리 3.뒤로가기`);
