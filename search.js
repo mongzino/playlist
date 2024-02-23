@@ -85,7 +85,6 @@ async function searchList(table, command) {
   let key = 1;
   let result;
   let max;
-  let projectQuery = { title: 1 };
   let sortingQuery = { title: 1 };
   let findQuery = {};
 
@@ -96,7 +95,6 @@ async function searchList(table, command) {
       .collection(collections[table])
       .countDocuments();
     if (command == 1) sortingQuery = { views: -1 }; // 인기순
-    if (table == 3) projectQuery = { singer: 1 }; // 가수는 이름이 다름
   } else if (command == 3) {
     const user = await client
       .db(dbName)
@@ -109,7 +107,6 @@ async function searchList(table, command) {
       .collection(collections[table])
       .countDocuments({ genre: userGenre });
     findQuery = { genre: userGenre };
-    if (table == 3) projectQuery = { singer: 1 };
   } else {
     // 조건에 따른 검색
     if (table == 3) {
@@ -118,7 +115,6 @@ async function searchList(table, command) {
         .collection(table)
         .countDocuments({ singer: { $regex: command, $options: "i" } });
       findQuery = { singer: { $regex: command, $options: "i" } };
-      projectQuery = { singer: 1 };
     } else {
       max = await client
         .db(dbName)
@@ -131,7 +127,6 @@ async function searchList(table, command) {
     .db(dbName)
     .collection(collections[table])
     .find(findQuery)
-    .project(projectQuery)
     .sort(sortingQuery)
     .toArray();
   if (command == 3) {
@@ -150,7 +145,9 @@ async function searchList(table, command) {
 
   while (key) {
     res = result.slice(start, start + 10);
-    console.table(res);
+    if (table == 1 || table == 2 || table == 4)
+      console.table(res.map((item) => ({ title: item.title })));
+    else console.table(res.map((item) => ({ title: item.singer })));
     while (true) {
       console.log(`${res.length}.더 보기 ${res.length + 1}.뒤로가기`);
       let searchCommand = await getInput();
@@ -191,7 +188,18 @@ async function searchResult(music) {
     .db(dbName)
     .collection("music")
     .updateOne({ _id: musicId }, { $inc: { views: 1 } });
-  console.table(result);
+  console.table(
+    result.map((item) => ({
+      제목: item.title,
+      가수: item.singer,
+      앨범: item.albumTitle,
+      장르: item.genre,
+      발매일: item.release,
+      시간: `${item.length[0]}분 ${item.length[1]}초`,
+      조회수: `${item.views}회`,
+    }))
+  );
+
   while (true) {
     console.log("1.플레이리스트에 추가하기 2.뒤로가기");
     const searchResultCommand = await getInput();
@@ -230,7 +238,49 @@ async function searchResultElse(table, value) {
     .db(dbName)
     .collection(collections[table])
     .updateOne({ _id: value._id }, { $inc: { views: 1 } });
-  console.table(result);
+
+  value = await client
+    .db(dbName)
+    .collection(collections[table])
+    .find({ _id: value._id })
+    .toArray();
+  if (table == 2) {
+    console.table(
+      value.map((item) => ({
+        앨범명: item.title,
+        가수: item.singer,
+        발매일: item.release,
+        장르: item.genre,
+        시간: `${item.length[0]}분 ${item.length[1]}초`,
+        재생수: `${item.views}회`,
+      }))
+    );
+  } else if (table == 3) {
+    console.table(
+      value.map((item) => ({
+        가수: item.singer,
+        데뷔일: item.debut,
+        장르: item.genre,
+        조회수: `${item.views}회`,
+      }))
+    );
+  } else if (table == 4) {
+    console.table(
+      value.map((item) => ({
+        플레이리스트: item.title,
+        제작자: item.owner,
+        소개: item.description,
+        재생수: `${item.views}회`,
+      }))
+    );
+  }
+  console.table(
+    result.map((item) => ({
+      제목: item.title,
+      시간: `${item.length[0]}분 ${item.length[1]}초`,
+      재생수: `${item.views}회`,
+    }))
+  );
   while (true) {
     console.log(
       `${result.length}. ${collections[table]} 전체 플레이리스트에 추가하기 ${
@@ -304,3 +354,5 @@ async function addMusicToPlayList(table, target) {
     }
   }
 }
+
+main(4000000);
