@@ -1,10 +1,11 @@
 import { MongoClient } from "mongodb";
 import getUserInput from "./userInput.js";
-import { create, find, modify, remove } from "./myPlaylist.js";
+import { create, find, modify, remove } from "./myPlaylist_pretty.js";
+import chalk from "chalk";
 
 async function main(client, user_id) {
   while (true) {
-    console.log(`마이페이지 - 1.플레이리스트 관리 2.내 정보 관리 3.뒤로가기`);
+    console.log(chalk.bgCyan(`마이페이지`), chalk.white(`- 1:플레이리스트 관리 2:내 정보 관리`), chalk.cyan(`3:뒤로가기`));
     let menu = await getUserInput();
     // 플레이리스트 관리
     if (menu === "1") {
@@ -28,7 +29,7 @@ async function main(client, user_id) {
         console.table(playlist, ["owner", "title", "description", "views"]);
         // 메뉴 선택
         console.log(
-          "플레이리스트 관리 - 1: 플레이리스트 생성 2: 플레이리스트 조회 3: 플레이리스트 수정 4: 플레이리스트 삭제 5: 뒤로가기"
+          chalk.bgCyan("플레이리스트 관리"), chalk.white("- 1: 플레이리스트 생성 2: 플레이리스트 조회 3: 플레이리스트 수정 4: 플레이리스트 삭제"), chalk.cyan(`5:뒤로가기`)
         );
         let pl_menu = parseInt(await getUserInput());
         if (pl_menu === 1) {
@@ -44,7 +45,7 @@ async function main(client, user_id) {
           // 내 플레이리스트 목록 보여주는 함수
           await remove(client, playlist);
         } else if (pl_menu === 5) {
-          console.log("뒤로가기");
+
           break;
         } else {
           console.log("잘못된 입력입니다. 메뉴를 다시 선택해주세요.");
@@ -91,4 +92,4 @@ const wait = (timeToDelay) =>
 
 const uri = process.env.DB_URL;
 const client = new MongoClient(uri);
-// await main(client, 4000000);
+await main(client, 4000000);

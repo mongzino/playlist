@@ -7,5 +7,6 @@ package.json
 
 deleteData.js
 insertData.js
-counter.jsmaintest.js
+counter.js
+maintest.js
 password.js
