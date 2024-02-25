@@ -90,7 +90,7 @@ export async function profileMusic() {
     }
 }
 
-profileMusic();
+// profileMusic();
 
 // 선호 장르 업데이트
 export async function favoriteGenre() {
