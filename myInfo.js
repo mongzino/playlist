@@ -80,6 +80,7 @@ export async function profileMusic() {
                 console.log(`프로필 뮤직이 '${musicInfo}'(으)로 업데이트되었습니다.`);
                 await wait(1000);
                 console.clear();
+                break;
             } else {
                 console.log('일치하는 회원이 없습니다.');
             }
@@ -128,6 +129,7 @@ export async function favoriteGenre() {
                 console.log(`프로필 뮤직이 '${genreInfo}'(으)로 업데이트되었습니다.`);
                 await wait(1000);
                 console.clear();
+                break;
             } else {
                 console.log('일치하는 회원이 없습니다.');
             }
