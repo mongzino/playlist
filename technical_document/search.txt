@@ -1,0 +1,29 @@
+0. searchMain (ID, cli)
+  * 검색할 collection을 선택하는 함수
+  * 현재 접속한 user의 id와 mongodb의 client의 정보를 받아와 접속을 유지
+
+1. searchMenu (coll)
+  * collection 정렬 또는 검색 방식을 선택하는 함수
+
+2. getSearch (coll)
+  * 사용자로 부터 검색어를 입력받는 함수
+
+3. loadSearchResult (coll, command)
+  * searchMenu에서 선택한 방식으로 data를 불러오는 함수
+
+4. randomRecommend (input)
+  * 배열을 입력받아서 index를 랜덤하게 섞어주고 반환하는 함수
+
+5. displaySearchResult (coll, command, result)
+  * loadSearchMenu 에서 불러온 data를 출력하는 함수
+  * 한번에 최대 10개씩 data를 출력
+
+6. displayMusic (music)
+  * 선택한 음악의 정보를 출력하는 함수
+  * 정보를 출력할 때 곡의 재생수가 +1 증가한다.
+
+7. displayList (coll, list)
+  * 선택한 앨범, 가수, 플레이리스트의 정보와 포함된 곡들을 출력하는 함수
+
+8. addMusicToPlayList (coll, target, listName)
+  * 선택한 노래 또는 앨범, 가수, 플레이리스트에 포함된 곡을 플레이리스트에 추가하는 함수
