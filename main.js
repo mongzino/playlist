@@ -1,11 +1,7 @@
 import { MongoClient } from "mongodb";
 import getUserInput from "./userInput.js";
 import chalk from "chalk";
-import ckName, {
-  ckPassword,
-  updateGenre,
-  createAccount,
-} from "./signUp.js";
+import ckName, { ckPassword, updateGenre, createAccount } from "./signUp.js";
 import { login } from "./login.js";
 import mypage from "./myPage.js";
 import search from "./search.js";
@@ -43,7 +39,7 @@ async function main() {
             chalk.bgCyan(`\n계정생성 되었습니다 환영합니다 ${name}님`)
           );
           await createAccount(client, name, password);
-          await updateGenre(client,name,password);
+          await updateGenre(client, name, password);
         }
       } else if (mainInput == 2) {
         // console.log("로그인");
@@ -86,5 +82,3 @@ async function main() {
 }
 
 main();
-
-export default client;
