@@ -13,6 +13,7 @@ async function main() {
   let id = 0;
   try {
     while (true) {
+      console.clear();
       console.log(
         chalk.cyan(`
 ██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗
